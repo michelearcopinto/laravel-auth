@@ -6,7 +6,8 @@
         <div class="container">
             <h1 class="mt-2 fw-bold">Edit a project:</h1>
 
-            <form action="{{ route('dashboard.projects.update', ['project' => $project->id]) }}" method="POST" class="mb-5">
+            <form action="{{ route('dashboard.projects.update', ['project' => $project->id]) }}" method="POST"
+                enctype="multipart/form-data" class="mb-5">
 
                 @csrf
 
@@ -34,16 +35,26 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="image" class="form-label">Insert The Image</label>
-                    <input type="text" class="form-control" id="image" aria-describedby="image" name="image"
-                        value='{{ old('image') ?? $project->image }}' maxlength="1080">
-                </div>
+                @if ($project->cover_image)
+                    <figure class="mb-3">
+                        <img src="{{ asset('/storage/' . $project->cover_image) }}" alt="{{ $project->slug }}">
+                    </figure>
+                @endif
 
                 <div class="mb-3">
-                    <label for="file" class="form-label">Insert The File</label>
-                    <input type="text" class="form-control" id="file" aria-describedby="file" name="file"
-                        value='{{ old('file') ?? $project->file }}' maxlength="1080">
+                    <label for="cover_image">Cambia immagine:</label>
+                    <input type="file" name="cover_image" id="cover_image"
+                        class="form-control
+                        @error('cover_image') is-invalid @enderror">
+                    @error('cover_image')
+                        <div class="alert alert-danger mt-1">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                    @if (old('cover_image'))
+                        <p class="mt-2">Ultimo file caricato: {{ old('cover_image') }}</p>
+                    @endif
                 </div>
 
                 <button type="submit" class="btn btn-primary">EDIT</button>

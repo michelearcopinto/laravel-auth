@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\Support\Str;
 use App\Models\Project;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -23,7 +24,6 @@ class ProjectController extends Controller
             'Slug',
             'Description',
             'Image',
-            'File',
             'Created At',
             'Updated At'
         ];
@@ -47,6 +47,13 @@ class ProjectController extends Controller
         $validated_data = $request->validated();
         $slug = Str::slug($request->title, '-');
         $validated_data['slug'] = $slug;
+
+        if ($request->hasFile('cover_image')) {
+            $path = Storage::disk('public')->put('project_images', $request->cover_image);
+
+            $validated_data['cover_image'] = $path;
+        }
+
         $new_project = new Project();
         $new_project = Project::create($validated_data);
 
@@ -77,6 +84,17 @@ class ProjectController extends Controller
         $validated_data = $request->validated();
         $slug = Str::slug($request->title, '-');
         $validated_data['slug'] = $slug;
+
+        if ($request->hasFile('cover_image')) {
+            if ($project->cover_image) {
+                Storage::delete($project->cover_image);
+            }
+
+            $path = Storage::disk('public')->put('project_images', $request->cover_image);
+
+            $validated_data['cover_image'] = $path;
+        }
+
         $project->update($validated_data);
 
         return redirect()->route('dashboard.projects.show', ['project' => $project->id]);
@@ -87,6 +105,12 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+
+        if ($project->cover_image) {
+
+            Storage::delete($project->cover_image);
+        }
+
         $project->delete();
 
         return redirect()->route('dashboard.projects.index');

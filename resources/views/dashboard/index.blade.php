@@ -23,8 +23,7 @@
                         </td>
                         <td>{{ $project->slug }}</td>
                         <td>{{ $project->description }}</td>
-                        <td>{{ $project->image }}</td>
-                        <td>{{ $project->file }}</td>
+                        <td>{{ $project->cover_image }}</td>
                         <td>{{ $project->created_at }}</td>
                         <td>{{ $project->updated_at }}</td>
                         <td>

@@ -23,8 +23,6 @@ class ProjectSeeder extends Seeder
                 'title' => $title,
                 'slug' => $slug,
                 'description' => $faker->paragraph,
-                'image' => $faker->imageUrl(),
-                'file' => $faker->fileExtension,
             ]);
         }
     }
